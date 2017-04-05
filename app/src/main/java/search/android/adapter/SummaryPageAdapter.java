@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -64,7 +65,7 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     /*
      * ViewHolder
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView thumbnail;
         public TextView title;
@@ -76,6 +77,12 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
             title = (TextView) itemView.findViewById(R.id.title);
             summary = (TextView) itemView.findViewById(R.id.summary);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            Toast.makeText(v.getContext(), title.getText(), Toast.LENGTH_SHORT).show();
         }
     }
 }

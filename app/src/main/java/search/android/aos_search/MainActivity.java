@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -33,22 +32,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearchButtonClicked(final String searchText) {
 
-                List<SummaryPage> wikiPages = new ArrayList<>();
+                WikiPageSearchTask task = new WikiPageSearchTask(adapter);
+                task.execute(searchText);
+
+
+//                List<SummaryPage> wikiPages = new ArrayList<>();
 /*
                 SummaryPage summaryPage = WikiPageFinder.findSummaryPage(searchText);
                 if(summaryPage != null) {
                     wikiPages.add(summaryPage);
                 }
 */
+/*
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
-                        /*
+
                         SummaryPage summaryPage = WikiPageFinder.findSummaryPage(searchText);
                         if(summaryPage != null) {
                             Log.d("Success", summaryPage.getTitle() + " : " + summaryPage.getSummary());
                         }
-                        */
+
                         List<SummaryPage> summaryPages = WikiPageFinder.findRelatedPages(searchText);
                         if(summaryPages != null) {
                             for(SummaryPage summaryPage : summaryPages) {
@@ -57,8 +61,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+                */
 
-
+/*
                 wikiPages.add(new SummaryPage("", "a", "a1"));
                 wikiPages.add(new SummaryPage("", "bb", "bb22"));
                 wikiPages.add(new SummaryPage("", "ccc", "ccc333"));
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
                 adapter.setWikiPages(wikiPages);
                 adapter.notifyDataSetChanged();
-
+*/
                 Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_LONG).show();
 
 
@@ -85,5 +90,40 @@ public class MainActivity extends AppCompatActivity {
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
+
+    }
+
+    private class WikiPageSearchTask extends AsyncTask<String, Void, Void> {
+
+        private SummaryPageAdapter summaryPageAdapter;
+        private List<SummaryPage> wikiPages;
+
+        public WikiPageSearchTask(SummaryPageAdapter summaryPageAdapter) {
+            super();
+            this.summaryPageAdapter = summaryPageAdapter;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            wikiPages = null;
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            wikiPages = WikiPageFinder.findRelatedPages(params[0]);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(wikiPages != null) {
+                summaryPageAdapter.setWikiPages(wikiPages);
+            } else {
+                summaryPageAdapter.setWikiPages(new ArrayList<SummaryPage>());
+            }
+            summaryPageAdapter.notifyDataSetChanged();
+        }
     }
 }
