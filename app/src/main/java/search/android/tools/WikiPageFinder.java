@@ -19,9 +19,9 @@ import search.android.vo.SummaryPage;
  */
 
 public class WikiPageFinder {
-    private static String htmlUrl = "https://www.mediawiki.org/api/rest_v1/page/html/";
-    private static String summaryUrl = "https://www.mediawiki.org/api/rest_v1/page/summary/";
-    private static String relatedUrl = "https://www.mediawiki.org/api/rest_v1/page/related/";
+    private static String htmlUrl = "https://en.wikipedia.org/api/rest_v1/page/html/";
+    private static String summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/";
+    private static String relatedUrl = "https://en.wikipedia.org/api/rest_v1/page/related/";
 
     private static Object getWikiData(String url, JsonParsing parser) {
 
@@ -34,6 +34,7 @@ public class WikiPageFinder {
         try {
             wikiUrl = new URL(url); //MalformedException
             wikiConnection = (HttpsURLConnection) wikiUrl.openConnection(); //IOException
+            wikiConnection.setRequestProperty("Accept", "application/problem+json");
 
             if(wikiConnection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
                 responseBodyReader = new InputStreamReader(wikiConnection.getInputStream(), "UTF-8");
