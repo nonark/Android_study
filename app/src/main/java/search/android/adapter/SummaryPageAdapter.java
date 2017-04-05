@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -82,7 +81,8 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(v.getContext(), title.getText(), Toast.LENGTH_SHORT).show();
+            //Intent intent = new Intent(MainActivity.class, DetailActivity.class);
+            //Toast.makeText(v.getContext(), title.getText(), Toast.LENGTH_SHORT).show();
         }
     }
 }
