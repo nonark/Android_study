@@ -35,7 +35,7 @@
             android:textSize="24dp"
             android:paddingBottom="5dp"
             android:hint="Result"
-            android:id="@+id/searchText"
+            android:id="@+id/titleBar"
             android:layout_alignParentLeft="true"
             android:textStyle="bold"
             android:maxLength="20"
@@ -47,7 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="1.5dp"
             android:background="@color/colorDefaultUnderLine"
-            android:layout_below="@id/searchText"
+            android:layout_below="@id/titleBar"
             android:id="@+id/underLine"
             />
 

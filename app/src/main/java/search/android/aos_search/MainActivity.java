@@ -1,12 +1,12 @@
 package search.android.aos_search;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,49 +35,6 @@ public class MainActivity extends AppCompatActivity {
                 WikiPageSearchTask task = new WikiPageSearchTask(adapter);
                 task.execute(searchText);
 
-
-//                List<SummaryPage> wikiPages = new ArrayList<>();
-/*
-                SummaryPage summaryPage = WikiPageFinder.findSummaryPage(searchText);
-                if(summaryPage != null) {
-                    wikiPages.add(summaryPage);
-                }
-*/
-/*
-                AsyncTask.execute(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        SummaryPage summaryPage = WikiPageFinder.findSummaryPage(searchText);
-                        if(summaryPage != null) {
-                            Log.d("Success", summaryPage.getTitle() + " : " + summaryPage.getSummary());
-                        }
-
-                        List<SummaryPage> summaryPages = WikiPageFinder.findRelatedPages(searchText);
-                        if(summaryPages != null) {
-                            for(SummaryPage summaryPage : summaryPages) {
-                                Log.d("Success", summaryPage.getTitle() + " : " + summaryPage.getSummary());
-                            }
-                        }
-                    }
-                });
-                */
-
-/*
-                wikiPages.add(new SummaryPage("", "a", "a1"));
-                wikiPages.add(new SummaryPage("", "bb", "bb22"));
-                wikiPages.add(new SummaryPage("", "ccc", "ccc333"));
-                wikiPages.add(new SummaryPage("", "dddd", "dddd4444"));
-                wikiPages.add(new SummaryPage("", "eeeee", "eeeee55555"));
-                wikiPages.add(new SummaryPage("", "a", "a1"));
-
-                adapter.setWikiPages(wikiPages);
-                adapter.notifyDataSetChanged();
-*/
-                Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_LONG).show();
-
-
-
             }
         });
 
@@ -86,6 +43,25 @@ public class MainActivity extends AppCompatActivity {
         List<SummaryPage> wikiPages = new ArrayList<>();
 
         adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item);
+        adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
+            @Override
+            public void onItemClicked(String searchText) {
+                //oast.makeText(getApplicationContext(), searchText, Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                intent.putExtra("Search", searchText);
+                startActivity(intent);
+            }
+        });
+        adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
+            @Override
+            public void onItemClicked(String searchText) {
+                Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
+                intent.putExtra("Search", searchText);
+                startActivity(intent);
+            }
+        });
+
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         wikiPagesView.setItemAnimator(new DefaultItemAnimator());

@@ -21,11 +21,16 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     private List<SummaryPage> wikiPages;
     private int itemLayout;
 
+    private OnRecyclerViewItemClickedListener relatedItemClickedListner;
+    private OnRecyclerViewItemClickedListener headerItemClickedLListner;
+
+    private static final int VIEW_TYPE_HEADER = 0;
+    private static final int VIEW_TYPE_RELATED_PAGE = 1;
+
     //Getter and Setter
     public List<SummaryPage> getWikiPages() {
         return wikiPages;
     }
-
     public void setWikiPages(List<SummaryPage> wikiPages) {
         this.wikiPages = wikiPages;
     }
@@ -33,10 +38,15 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     public int getItemLayout() {
         return itemLayout;
     }
-
     public void setItemLayout(int itemLayout) {
         this.itemLayout = itemLayout;
     }
+
+    public OnRecyclerViewItemClickedListener getRelatedItemClickedListner() { return relatedItemClickedListner; }
+    public void setRelatedListner(OnRecyclerViewItemClickedListener relatedItemClickedListner) { this.relatedItemClickedListner = relatedItemClickedListner; }
+
+    public OnRecyclerViewItemClickedListener getHeaderItemClickedLListner() { return headerItemClickedLListner; }
+    public void setHeaderItemClickedLListner(OnRecyclerViewItemClickedListener headerItemClickedLListner) { this.headerItemClickedLListner = headerItemClickedLListner; }
 
     public SummaryPageAdapter(List<SummaryPage> wikiPages, int itemLayout) {
         this.wikiPages = wikiPages;
@@ -45,8 +55,14 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        if( viewType == VIEW_TYPE_HEADER ) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
+            return new ViewHolder(view, headerItemClickedLListner);
+        }
+
         View view = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
-        return new ViewHolder(view);
+        return new ViewHolder(view, relatedItemClickedListner);
     }
 
     @Override
@@ -61,28 +77,50 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
         return wikiPages.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+
+        if(position == 0) {
+            return VIEW_TYPE_HEADER;
+        }
+
+        return VIEW_TYPE_RELATED_PAGE;
+    }
+
     /*
-     * ViewHolder
-     */
+         * ViewHolder
+         */
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         public ImageView thumbnail;
         public TextView title;
         public TextView summary;
+        public OnRecyclerViewItemClickedListener listner;
 
         public ViewHolder(View itemView) {
+            this(itemView, null);
+        }
+
+        public ViewHolder(View itemView, OnRecyclerViewItemClickedListener listner) {
             super(itemView);
 
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
             title = (TextView) itemView.findViewById(R.id.title);
             summary = (TextView) itemView.findViewById(R.id.summary);
+            this.listner = listner;
+
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-            //Intent intent = new Intent(MainActivity.class, DetailActivity.class);
-            //Toast.makeText(v.getContext(), title.getText(), Toast.LENGTH_SHORT).show();
+            if(listner != null) {
+                listner.onItemClicked(title.getText().toString());
+            }
         }
+    }
+
+    public interface OnRecyclerViewItemClickedListener {
+        void onItemClicked(String searchText);
     }
 }
