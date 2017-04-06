@@ -42,11 +42,11 @@ public class MainActivity extends AppCompatActivity {
 
         List<SummaryPage> wikiPages = new ArrayList<>();
 
-        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item);
+        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header ,R.layout.search_item);
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                //oast.makeText(getApplicationContext(), searchText, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
@@ -88,6 +88,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(String... params) {
             wikiPages = WikiPageFinder.findRelatedPages(params[0]);
+
+            if(wikiPages == null) {
+                wikiPages = new ArrayList<>();
+            }
+            wikiPages.add(0, WikiPageFinder.findSummaryPage(params[0]));
+
             return null;
         }
 

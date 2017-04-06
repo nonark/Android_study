@@ -1,10 +1,12 @@
 package search.android.tools;
 
+import android.graphics.BitmapFactory;
 import android.util.JsonReader;
 import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -84,6 +86,24 @@ public class WikiPageFinder {
                         case "extract" :
                             summaryPage.setSummary(jsonReader.nextString());
                             break;
+                        case "thumbnail" :
+                            jsonReader.beginObject();
+                            while(jsonReader.hasNext()) {
+                                String key3 = jsonReader.nextName();
+                                switch(key3) {
+                                    case "source" :
+                                        URL url = new URL(jsonReader.nextString());
+                                        HttpURLConnection imgConnection = (HttpURLConnection) url.openConnection();
+                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
+                                        imgConnection.disconnect();
+                                        break;
+                                    default :
+                                        jsonReader.skipValue();
+                                        break;
+                                }
+                            }
+                            jsonReader.endObject();
+                            break;
                         default :
                             jsonReader.skipValue();
                             break;
@@ -127,6 +147,25 @@ public class WikiPageFinder {
                                             break;
                                         case "extract" :
                                             summaryPage.setSummary(jsonReader.nextString());
+                                            break;
+
+                                        case "thumbnail" :
+                                            jsonReader.beginObject();
+                                            while(jsonReader.hasNext()) {
+                                                String key3 = jsonReader.nextName();
+                                                switch(key3) {
+                                                    case "source" :
+                                                        URL url = new URL(jsonReader.nextString());
+                                                        HttpURLConnection imgConnection = (HttpURLConnection) url.openConnection();
+                                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
+                                                        imgConnection.disconnect();
+                                                        break;
+                                                    default :
+                                                        jsonReader.skipValue();
+                                                        break;
+                                                }
+                                            }
+                                            jsonReader.endObject();
                                             break;
                                         default :
                                             jsonReader.skipValue();

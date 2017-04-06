@@ -49,7 +49,6 @@ public class WebviewActivity extends AppCompatActivity {
             String searchText = intent.getStringExtra("Search");
             statusBar.setTitle(searchText);
 
-            webView.getSettings().setJavaScriptEnabled(true);
             webView.setWebViewClient(new WebViewClient());
             webView.loadUrl(WikiPageFinder.getHtmlUrl(searchText));
         }

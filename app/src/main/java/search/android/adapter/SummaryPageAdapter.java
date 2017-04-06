@@ -19,6 +19,7 @@ import search.android.vo.SummaryPage;
 public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.ViewHolder> {
 
     private List<SummaryPage> wikiPages;
+    private int headerLayout;
     private int itemLayout;
 
     private OnRecyclerViewItemClickedListener relatedItemClickedListner;
@@ -35,6 +36,9 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
         this.wikiPages = wikiPages;
     }
 
+    public int getHeaderLayout() { return headerLayout; }
+    public void setHeaderLayout(int headerLayout) { this.headerLayout = headerLayout; }
+
     public int getItemLayout() {
         return itemLayout;
     }
@@ -50,6 +54,13 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
 
     public SummaryPageAdapter(List<SummaryPage> wikiPages, int itemLayout) {
         this.wikiPages = wikiPages;
+        this.headerLayout = itemLayout;
+        this.itemLayout = itemLayout;
+    }
+
+    public SummaryPageAdapter(List<SummaryPage> wikiPages, int headerLayout, int itemLayout) {
+        this.wikiPages = wikiPages;
+        this.headerLayout = headerLayout;
         this.itemLayout = itemLayout;
     }
 
@@ -57,7 +68,7 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         if( viewType == VIEW_TYPE_HEADER ) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(headerLayout, parent, false);
             return new ViewHolder(view, headerItemClickedLListner);
         }
 
@@ -68,6 +79,7 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SummaryPage wikiPage = wikiPages.get(position);
+        holder.thumbnail.setImageBitmap(wikiPage.getThumbnail());
         holder.title.setText(wikiPage.getTitle());
         holder.summary.setText(wikiPage.getSummary());
     }
