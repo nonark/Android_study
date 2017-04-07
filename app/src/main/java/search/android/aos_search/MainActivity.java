@@ -1,11 +1,14 @@
 package search.android.aos_search;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,16 +23,15 @@ public class MainActivity extends Activity {
     SearchBar searchBar;
     RecyclerView wikiPagesView;
     SummaryPageAdapter adapter;
-    WikiPageSearchTask task;
+    LinearLayout rootLayout;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         wikiPagesView = (RecyclerView) findViewById(R.id.wikiPages);
-
         List<SummaryPage> wikiPages = new ArrayList<>();
 
         adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header ,R.layout.search_item);
@@ -37,13 +39,12 @@ public class MainActivity extends Activity {
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                //Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
             }
         });
+
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
@@ -57,14 +58,24 @@ public class MainActivity extends Activity {
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
+        context = this;
         searchBar = (SearchBar) findViewById(R.id.searchBar);
-        task = new WikiPageSearchTask(this, adapter);
+
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
             @Override
             public void onSearchButtonClicked(final String searchText) {
+                WikiPageSearchTask task = new WikiPageSearchTask(context, adapter);
                 task.execute(searchText);
-
             }
         });
+
+        rootLayout = (LinearLayout) findViewById(R.id.rootView);
+        rootLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                searchBar.requestFocus();
+            }
+        });
+        rootLayout.performClick();
     }
 }

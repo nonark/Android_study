@@ -10,12 +10,14 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import search.android.aos_search.R;
+
 /**
  * Created by nhnent on 2017. 4. 5..
  */
@@ -40,7 +42,7 @@ public class SearchBar extends LinearLayout {
         init(context);
     }
 
-    private void init(Context context) {
+    private void init(final Context context) {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.wiki_search_bar, this, true);
 
@@ -51,9 +53,19 @@ public class SearchBar extends LinearLayout {
             public void onFocusChange(View v, boolean hasFocus) {
                 if(hasFocus) {
                     underLine.setBackgroundResource(R.color.colorSelectUnderLine);
+
+                    if(searchText.getText().length() > 0) {
+                        deleteButton.setVisibility(View.VISIBLE);
+                    }
                 }
                 else {
+
+                    //키보드 숨기기
+                    InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(getWindowToken(), 0);
+
                     underLine.setBackgroundResource(R.color.colorDefaultUnderLine);
+                    deleteButton.setVisibility(View.GONE);
                 }
             }
         });

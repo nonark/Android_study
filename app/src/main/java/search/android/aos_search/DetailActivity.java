@@ -1,6 +1,7 @@
 package search.android.aos_search;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -25,7 +26,7 @@ public class DetailActivity extends Activity {
     StatusBar statusBar;
     RecyclerView wikiPagesView;
     SummaryPageAdapter adapter;
-    WikiPageSearchTask task;
+    Context context;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class DetailActivity extends Activity {
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
+        context = this;
         statusBar = (StatusBar) findViewById(R.id.statusBar);
         statusBar.setOnBackButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
@@ -80,7 +82,7 @@ public class DetailActivity extends Activity {
         if (intent != null) {
             String searchText = intent.getStringExtra("Search");
             statusBar.setTitle(searchText);
-            task = new WikiPageSearchTask(this, adapter);
+            WikiPageSearchTask task = new WikiPageSearchTask(context, adapter);
             task.execute(searchText);
         }
     }
