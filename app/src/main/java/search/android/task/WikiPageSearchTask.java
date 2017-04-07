@@ -46,7 +46,7 @@ public class WikiPageSearchTask extends AsyncTask<String, Void, Void> {
             wikiPages = new ArrayList<>();
         }
 
-        SummaryPage summaryPage = WikiPageFinder.findSummaryPage(params[0]);
+        SummaryPage summaryPage = WikiPageFinder.getSummaryPage(params[0]);
 
         if(summaryPage != null) {
             wikiPages.add(0, summaryPage);

@@ -68,49 +68,67 @@ public class WikiPageFinder {
         return resultParsing;
     }
 
-    public static SummaryPage findSummaryPage(String title) {
+    private static Object summaryJsonParsing(JsonReader jsonReader) {
+        SummaryPage summaryPage = new SummaryPage();
+        URL url = null;
+        HttpURLConnection imgConnection = null;
+
+        try {
+            jsonReader.beginObject();
+            while(jsonReader.hasNext()) {
+                String key = jsonReader.nextName();
+
+                switch(key) {
+                    case "title" :
+                        summaryPage.setTitle(jsonReader.nextString().replace("_", " "));
+                        break;
+                    case "extract" :
+                        summaryPage.setSummary(jsonReader.nextString().replace("_", " "));
+                        break;
+                    case "thumbnail" :
+                        jsonReader.beginObject();
+                        while(jsonReader.hasNext()) {
+                            String thumbnailKey = jsonReader.nextName();
+                            switch(thumbnailKey) {
+                                case "source" :
+                                    try {
+                                        url = new URL(jsonReader.nextString());
+                                        imgConnection = (HttpURLConnection) url.openConnection();
+                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
+                                        imgConnection.disconnect();
+                                    } catch(IOException e) {
+                                    } finally {
+                                        if(imgConnection != null) {
+                                            imgConnection.disconnect();
+                                        }
+                                    }
+
+                                    break;
+                                default :
+                                    jsonReader.skipValue();
+                                    break;
+                            }
+                        }
+                        jsonReader.endObject();
+                        break;
+                    default :
+                        jsonReader.skipValue();
+                        break;
+                }
+            }
+            jsonReader.endObject();
+        } catch (IOException e) {
+            summaryPage = null;
+        }
+
+        return summaryPage;
+    }
+
+    public static SummaryPage getSummaryPage(String title) {
         JsonParsing jsonParser = new JsonParsing() {
             @Override
             public Object excuteParsing(JsonReader jsonReader) throws IOException{
-
-                SummaryPage summaryPage = new SummaryPage();
-
-                jsonReader.beginObject();
-                while(jsonReader.hasNext()) {
-                    String key = jsonReader.nextName();
-
-                    switch(key) {
-                        case "title" :
-                            summaryPage.setTitle(jsonReader.nextString().replace("_", " "));
-                            break;
-                        case "extract" :
-                            summaryPage.setSummary(jsonReader.nextString().replace("_", " "));
-                            break;
-                        case "thumbnail" :
-                            jsonReader.beginObject();
-                            while(jsonReader.hasNext()) {
-                                String key3 = jsonReader.nextName();
-                                switch(key3) {
-                                    case "source" :
-                                        URL url = new URL(jsonReader.nextString());
-                                        HttpURLConnection imgConnection = (HttpURLConnection) url.openConnection();
-                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
-                                        imgConnection.disconnect();
-                                        break;
-                                    default :
-                                        jsonReader.skipValue();
-                                        break;
-                                }
-                            }
-                            jsonReader.endObject();
-                            break;
-                        default :
-                            jsonReader.skipValue();
-                            break;
-                    }
-                }
-                jsonReader.endObject();
-                return summaryPage;
+                return summaryJsonParsing(jsonReader);
             }
         };
 
@@ -133,50 +151,13 @@ public class WikiPageFinder {
                             jsonReader.beginArray();
                             summaryPages = new ArrayList<>();
 
-                            ///////summary와 같은 코드
                             while(jsonReader.hasNext()) {
-                                SummaryPage summaryPage = new SummaryPage();
-
-                                jsonReader.beginObject();
-                                while(jsonReader.hasNext()) {
-                                    String key2 = jsonReader.nextName();
-
-                                    switch(key2) {
-                                        case "title" :
-                                            summaryPage.setTitle(jsonReader.nextString().replace("_", " "));
-                                            break;
-                                        case "extract" :
-                                            summaryPage.setSummary(jsonReader.nextString().replace("_", " "));
-                                            break;
-
-                                        case "thumbnail" :
-                                            jsonReader.beginObject();
-                                            while(jsonReader.hasNext()) {
-                                                String key3 = jsonReader.nextName();
-                                                switch(key3) {
-                                                    case "source" :
-                                                        URL url = new URL(jsonReader.nextString());
-                                                        HttpURLConnection imgConnection = (HttpURLConnection) url.openConnection();
-                                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
-                                                        imgConnection.disconnect();
-                                                        break;
-                                                    default :
-                                                        jsonReader.skipValue();
-                                                        break;
-                                                }
-                                            }
-                                            jsonReader.endObject();
-                                            break;
-                                        default :
-                                            jsonReader.skipValue();
-                                            break;
-                                    }
+                                SummaryPage summaryPage = (SummaryPage) summaryJsonParsing(jsonReader);
+                                if(summaryPage != null) {
+                                    summaryPages.add(summaryPage);
                                 }
-                                jsonReader.endObject();
-                                //Log.d("Inner Success", summaryPage.getTitle() + " : " + summaryPage.getSummary());
-                                summaryPages.add(summaryPage);
                             }
-                            ///////
+
                             jsonReader.endArray();
                             break;
 
