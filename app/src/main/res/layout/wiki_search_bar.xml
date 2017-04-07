@@ -24,6 +24,7 @@
             android:paddingBottom="5dp"
             android:hint="검색어를 입력하세요"
             android:id="@+id/searchText"
+            android:inputType="textUri"
             android:layout_alignParentLeft="true"
             android:maxLength="20"
             android:imeOptions="actionSearch"

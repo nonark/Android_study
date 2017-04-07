@@ -1,12 +1,14 @@
 package search.android.aos_search;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +18,20 @@ import search.android.customview.SearchBar;
 import search.android.tools.WikiPageFinder;
 import search.android.vo.SummaryPage;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     SearchBar searchBar;
     RecyclerView wikiPagesView;
     SummaryPageAdapter adapter;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
 
         searchBar = (SearchBar) findViewById(R.id.searchBar);
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
@@ -82,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            dialog.show();
             wikiPages = null;
         }
 
@@ -92,7 +99,12 @@ public class MainActivity extends AppCompatActivity {
             if(wikiPages == null) {
                 wikiPages = new ArrayList<>();
             }
-            wikiPages.add(0, WikiPageFinder.findSummaryPage(params[0]));
+
+            SummaryPage summaryPage = WikiPageFinder.findSummaryPage(params[0]);
+
+            if(summaryPage != null) {
+                wikiPages.add(0, summaryPage);
+            }
 
             return null;
         }
@@ -100,12 +112,12 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(wikiPages != null) {
-                summaryPageAdapter.setWikiPages(wikiPages);
-            } else {
-                summaryPageAdapter.setWikiPages(new ArrayList<SummaryPage>());
-            }
+            summaryPageAdapter.setWikiPages(wikiPages);
             summaryPageAdapter.notifyDataSetChanged();
+            dialog.cancel();
+            if(wikiPages.size() == 0) {
+                Toast.makeText(getApplicationContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

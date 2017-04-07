@@ -79,6 +79,7 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         SummaryPage wikiPage = wikiPages.get(position);
+
         holder.thumbnail.setImageBitmap(wikiPage.getThumbnail());
         holder.title.setText(wikiPage.getTitle());
         holder.summary.setText(wikiPage.getSummary());

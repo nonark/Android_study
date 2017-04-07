@@ -1,13 +1,15 @@
 package search.android.aos_search;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +23,20 @@ import search.android.vo.SummaryPage;
  * Created by nhnent on 2017. 4. 5..
  */
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends Activity {
 
     StatusBar statusBar;
     RecyclerView wikiPagesView;
     SummaryPageAdapter adapter;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_result);
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
 
         statusBar = (StatusBar) findViewById(R.id.statusBar);
         statusBar.setOnBackButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
@@ -54,12 +60,10 @@ public class DetailActivity extends AppCompatActivity {
 
         List<SummaryPage> wikiPages = new ArrayList<>();
 
-        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header, R.layout.search_item);
+        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header ,R.layout.search_item);
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                //Toast.makeText(getApplicationContext(), searchText, Toast.LENGTH_SHORT).show();
-
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
@@ -100,6 +104,7 @@ public class DetailActivity extends AppCompatActivity {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            dialog.show();
             wikiPages = null;
         }
 
@@ -110,19 +115,24 @@ public class DetailActivity extends AppCompatActivity {
             if(wikiPages == null) {
                 wikiPages = new ArrayList<>();
             }
-            wikiPages.add(0, WikiPageFinder.findSummaryPage(params[0]));
+
+            SummaryPage summaryPage = WikiPageFinder.findSummaryPage(params[0]);
+
+            if(summaryPage != null) {
+                wikiPages.add(0, summaryPage);
+            }
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(wikiPages != null) {
-                summaryPageAdapter.setWikiPages(wikiPages);
-            } else {
-                summaryPageAdapter.setWikiPages(new ArrayList<SummaryPage>());
-            }
+            summaryPageAdapter.setWikiPages(wikiPages);
             summaryPageAdapter.notifyDataSetChanged();
+            dialog.cancel();
+            if(wikiPages.size() == 0) {
+                Toast.makeText(getApplicationContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

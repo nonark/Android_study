@@ -1,9 +1,9 @@
 package search.android.aos_search;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -14,7 +14,7 @@ import search.android.tools.WikiPageFinder;
  * Created by nhnent on 2017. 4. 6..
  */
 
-public class WebviewActivity extends AppCompatActivity {
+public class WebviewActivity extends Activity {
 
     StatusBar statusBar;
     WebView webView;

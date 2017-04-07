@@ -81,10 +81,10 @@ public class WikiPageFinder {
 
                     switch(key) {
                         case "title" :
-                            summaryPage.setTitle(jsonReader.nextString());
+                            summaryPage.setTitle(jsonReader.nextString().replace("_", " "));
                             break;
                         case "extract" :
-                            summaryPage.setSummary(jsonReader.nextString());
+                            summaryPage.setSummary(jsonReader.nextString().replace("_", " "));
                             break;
                         case "thumbnail" :
                             jsonReader.beginObject();
@@ -114,7 +114,7 @@ public class WikiPageFinder {
             }
         };
 
-        return (SummaryPage) getWikiData(summaryUrl+title, jsonParser);
+        return (SummaryPage) getWikiData(summaryUrl + title, jsonParser);
     }
 
     public static List<SummaryPage> findRelatedPages(String title) {
@@ -143,10 +143,10 @@ public class WikiPageFinder {
 
                                     switch(key2) {
                                         case "title" :
-                                            summaryPage.setTitle(jsonReader.nextString());
+                                            summaryPage.setTitle(jsonReader.nextString().replace("_", " "));
                                             break;
                                         case "extract" :
-                                            summaryPage.setSummary(jsonReader.nextString());
+                                            summaryPage.setSummary(jsonReader.nextString().replace("_", " "));
                                             break;
 
                                         case "thumbnail" :
