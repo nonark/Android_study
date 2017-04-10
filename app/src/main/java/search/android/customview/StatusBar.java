@@ -23,6 +23,7 @@ public class StatusBar extends LinearLayout {
 
     OnStatusBarClickedListener backButtonListener;
     OnStatusBarClickedListener closeButtonListener;
+    OnStatusBarClickedListener titleListener;
 
     public StatusBar(Context context) {
         super(context);
@@ -48,7 +49,6 @@ public class StatusBar extends LinearLayout {
             }
         });
 
-
         closeButton = (Button) findViewById(R.id.closeButton);
         closeButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -60,10 +60,23 @@ public class StatusBar extends LinearLayout {
         });
 
         title = (TextView) findViewById(R.id.titleBar);
+        title.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(titleListener != null) {
+                    titleListener.onStatusButtonClicked();
+                }
+            }
+        });
     }
 
     public void setTitle(String title) {
         this.title.setText(title);
+    }
+    public String getTitle() { return this.title.getText().toString(); }
+
+    public void setOnTitleClickedListener(OnStatusBarClickedListener statusBarListener) {
+        this.titleListener = statusBarListener;
     }
 
     public void setOnBackButtonClickedListener(OnStatusBarClickedListener statusBarListener) {

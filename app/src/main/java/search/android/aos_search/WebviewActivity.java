@@ -45,6 +45,18 @@ public class WebviewActivity extends Activity {
             }
         });
 
+        statusBar.setOnTitleClickedListener(new StatusBar.OnStatusBarClickedListener() {
+            @Override
+            public void onStatusButtonClicked() {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Wikipedia_URL");
+                intent.putExtra(Intent.EXTRA_TEXT, WikiPageFinder.getHtmlUrl(statusBar.getTitle()));
+                intent.setType("text/plain");
+                startActivity(Intent.createChooser(intent, "Share"));
+            }
+        });
+
         webView = (WebView) findViewById(R.id.webView);
 
         //Intent 내의 값이 null이 아니면 주어진 URL에 해당하는 웹 표시
