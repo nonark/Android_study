@@ -53,4 +53,10 @@ public class WebviewActivity extends Activity {
             webView.loadUrl(WikiPageFinder.getHtmlUrl(searchText));
         }
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_hold, R.anim.right_slide);
+    }
 }

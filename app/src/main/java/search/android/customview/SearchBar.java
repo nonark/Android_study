@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -25,7 +24,7 @@ import search.android.aos_search.R;
 public class SearchBar extends LinearLayout {
 
 
-    private EditText searchText;
+    private CustomEditText searchText;
     private View deleteButton;
     private View underLine;
     private Button searchButton;
@@ -46,8 +45,16 @@ public class SearchBar extends LinearLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.wiki_search_bar, this, true);
 
-        searchText = (EditText) findViewById(R.id.searchText);
+        searchText = (CustomEditText) findViewById(R.id.searchText);
         searchText.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS); //자동완성기능 제거
+        searchText.setOnBackPressListner(new CustomEditText.OnBackPressListener() {
+            @Override
+            public void onBackPressed() {
+                requestFocus();
+
+            }
+        });
+
         searchText.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -77,6 +84,7 @@ public class SearchBar extends LinearLayout {
                 switch(actionId) {
                     case EditorInfo.IME_ACTION_SEARCH :
                         searchBarListener.onSearchButtonClicked(searchText.getText().toString());
+                        requestFocus();
                         break;
 
                     default :
@@ -128,7 +136,9 @@ public class SearchBar extends LinearLayout {
         searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchBarListener.onSearchButtonClicked(searchText.getText().toString());
+                if(searchBarListener != null) {
+                    searchBarListener.onSearchButtonClicked(searchText.getText().toString());
+                }
             }
         });
 

@@ -42,6 +42,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
+                overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
 
@@ -51,6 +52,7 @@ public class MainActivity extends Activity {
                 Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
+                overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
 
@@ -78,4 +80,6 @@ public class MainActivity extends Activity {
         });
         rootLayout.performClick();
     }
+
+
 }

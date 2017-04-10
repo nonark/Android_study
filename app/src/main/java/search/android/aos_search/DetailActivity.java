@@ -44,6 +44,7 @@ public class DetailActivity extends Activity {
                 Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
+                overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
@@ -52,6 +53,7 @@ public class DetailActivity extends Activity {
                 Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
+                overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
 
@@ -85,5 +87,11 @@ public class DetailActivity extends Activity {
             WikiPageSearchTask task = new WikiPageSearchTask(context, adapter);
             task.execute(searchText);
         }
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.anim_hold, R.anim.right_slide);
     }
 }
