@@ -81,7 +81,7 @@ public class WikiPageFinder {
         return summaryPage;
     }
 
-    private static Object getWikiData(String url, JsonParsing parser) {
+    private static Object getWikiData(String url, JsonParser parser) {
 
         URL wikiUrl = null;
         HttpsURLConnection wikiConnection = null;
@@ -125,7 +125,7 @@ public class WikiPageFinder {
     }
 
     public static SummaryPage getSummaryPage(String title) {
-        JsonParsing jsonParser = new JsonParsing() {
+        JsonParser jsonParser = new JsonParser() {
             @Override
             public Object excuteParsing(JsonReader jsonReader) throws IOException{
                 return summaryJsonParsing(jsonReader);
@@ -136,7 +136,7 @@ public class WikiPageFinder {
     }
 
     public static List<SummaryPage> findRelatedPages(String title) {
-        JsonParsing jsonParser = new JsonParsing() {
+        JsonParser jsonParser = new JsonParser() {
             @Override
             public Object excuteParsing(JsonReader jsonReader) throws IOException {
 
@@ -179,7 +179,7 @@ public class WikiPageFinder {
         return htmlUrl + title;
     }
 
-    private interface JsonParsing {
+    private interface JsonParser {
         Object excuteParsing(JsonReader jsonReader) throws IOException;
     }
 }
