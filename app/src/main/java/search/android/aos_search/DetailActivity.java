@@ -37,7 +37,9 @@ public class DetailActivity extends Activity {
 
         List<SummaryPage> wikiPages = new ArrayList<>();
 
-        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header ,R.layout.search_item);
+        adapter = new SummaryPageAdapter(wikiPagesView.getContext(), wikiPages, R.layout.search_item_header ,R.layout.search_item);
+
+        //연관검색어를 클릭할 경우 해당 검색어와 연관된 페이지로 이동
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
@@ -47,6 +49,8 @@ public class DetailActivity extends Activity {
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
+
+        //헤더를 클릭할 경우 Webview 페이지로 이동
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
@@ -63,6 +67,7 @@ public class DetailActivity extends Activity {
 
         context = this;
         statusBar = (StatusBar) findViewById(R.id.statusBar);
+        // 뒤로가기 버튼 클릭시 finish 호출
         statusBar.setOnBackButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
@@ -70,6 +75,7 @@ public class DetailActivity extends Activity {
             }
         });
 
+        // X 버튼을 누르면 현재까지 생성한 모든 Activity를 제거하고 MainActivity를 상단에 출력
         statusBar.setOnCloseButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
@@ -80,6 +86,7 @@ public class DetailActivity extends Activity {
             }
         });
 
+        //Intent 내의 값이 null이 아니면 주어진 검색어에 해당하는 리스트 출력
         Intent intent = getIntent();
         if (intent != null) {
             String searchText = intent.getStringExtra("Search");

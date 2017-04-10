@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -34,7 +33,7 @@ public class MainActivity extends Activity {
         wikiPagesView = (RecyclerView) findViewById(R.id.wikiPages);
         List<SummaryPage> wikiPages = new ArrayList<>();
 
-        adapter = new SummaryPageAdapter(wikiPages, R.layout.search_item_header ,R.layout.search_item);
+        adapter = new SummaryPageAdapter(wikiPagesView.getContext(), wikiPages, R.layout.search_item_header ,R.layout.search_item);
 
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
@@ -58,7 +57,6 @@ public class MainActivity extends Activity {
 
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
         context = this;
         searchBar = (SearchBar) findViewById(R.id.searchBar);
@@ -80,6 +78,4 @@ public class MainActivity extends Activity {
         });
         rootLayout.performClick();
     }
-
-
 }
