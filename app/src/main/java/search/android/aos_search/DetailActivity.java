@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,8 +81,8 @@ public class DetailActivity extends Activity {
             @Override
             public void onStatusButtonClicked() {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //이전의 Activity를 제거
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
                 startActivity(intent);
             }
         });
@@ -93,6 +94,9 @@ public class DetailActivity extends Activity {
             statusBar.setTitle(searchText);
             WikiPageSearchTask task = new WikiPageSearchTask(context, adapter);
             task.execute(searchText);
+        } else {
+            Toast.makeText(getApplicationContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 

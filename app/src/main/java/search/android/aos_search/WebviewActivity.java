@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import search.android.customview.StatusBar;
 import search.android.tools.WikiPageFinder;
@@ -39,8 +40,8 @@ public class WebviewActivity extends Activity {
             @Override
             public void onStatusButtonClicked() {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //이전의 Activity를 제거
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
                 startActivity(intent);
             }
         });
@@ -67,6 +68,9 @@ public class WebviewActivity extends Activity {
 
             webView.setWebViewClient(new WebViewClient());
             webView.loadUrl(WikiPageFinder.getHtmlUrl(searchText));
+        } else {
+            Toast.makeText(getApplicationContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            finish();
         }
     }
 
