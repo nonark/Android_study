@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import search.android.aos_search.R;
@@ -23,7 +24,7 @@ import search.android.aos_search.R;
 
 public class SearchBar extends LinearLayout {
 
-
+    private RelativeLayout textArea;
     private CustomEditText searchText;
     private View deleteButton;
     private View underLine;
@@ -131,12 +132,14 @@ public class SearchBar extends LinearLayout {
 
         underLine = findViewById(R.id.underLine);
         searchButton = (Button) findViewById(R.id.searchButton);
+        textArea = (RelativeLayout) findViewById(R.id.textArea);
 
         //검색버튼을 누르면 리스너를 통해서 검색어를 전달
         searchButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(searchBarListener != null) {
+                    textArea.requestFocus();
                     searchBarListener.onSearchButtonClicked(searchText.getText().toString());
                 }
             }
