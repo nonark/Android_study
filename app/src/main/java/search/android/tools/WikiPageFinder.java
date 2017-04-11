@@ -25,6 +25,7 @@ public class WikiPageFinder {
     private static String summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/";
     private static String relatedUrl = "https://en.wikipedia.org/api/rest_v1/page/related/";
 
+    //Wikipedia Summary Parsing
     private static Object summaryJsonParsing(JsonReader jsonReader) {
         SummaryPage summaryPage = new SummaryPage();
         URL url = null;
@@ -81,6 +82,7 @@ public class WikiPageFinder {
         return summaryPage;
     }
 
+    //Wikipedia Parsing
     private static Object getWikiData(String url, JsonParser parser) {
 
         URL wikiUrl = null;

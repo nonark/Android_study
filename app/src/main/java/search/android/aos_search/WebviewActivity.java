@@ -46,6 +46,7 @@ public class WebviewActivity extends Activity {
             }
         });
 
+        //상단의 제목 클릭시 URL 공유
         statusBar.setOnTitleClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {

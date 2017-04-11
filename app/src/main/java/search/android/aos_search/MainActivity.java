@@ -58,6 +58,7 @@ public class MainActivity extends Activity {
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
+
         context = this;
         searchBar = (SearchBar) findViewById(R.id.searchBar);
 
