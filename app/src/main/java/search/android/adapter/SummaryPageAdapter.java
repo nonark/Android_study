@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import search.android.aos_search.R;
+import search.android.tools.MemoryImageCache;
 import search.android.vo.SummaryPage;
 
 /**
@@ -58,15 +59,11 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     public void setHeaderItemClickedLListner(OnRecyclerViewItemClickedListener headerItemClickedLListner) { this.headerItemClickedLListner = headerItemClickedLListner; }
 
     public SummaryPageAdapter(List<SummaryPage> wikiPages, int itemLayout) {
-        this.wikiPages = wikiPages;
-        this.headerLayout = itemLayout;
-        this.itemLayout = itemLayout;
+        this(null, wikiPages, itemLayout, itemLayout);
     }
 
     public SummaryPageAdapter(List<SummaryPage> wikiPages, int headerLayout, int itemLayout) {
-        this.wikiPages = wikiPages;
-        this.headerLayout = headerLayout;
-        this.itemLayout = itemLayout;
+        this(null, wikiPages, headerLayout, itemLayout);
     }
 
     public SummaryPageAdapter(Context context, List<SummaryPage> wikiPages, int headerLayout, int itemLayout) {
@@ -92,7 +89,7 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         SummaryPage wikiPage = wikiPages.get(position);
 
-        holder.thumbnail.setImageBitmap(wikiPage.getThumbnail());
+        holder.thumbnail.setImageBitmap(MemoryImageCache.getBitmap(wikiPage.getThumbnail()));
         holder.title.setText(wikiPage.getTitle());
         holder.summary.setText(wikiPage.getSummary());
 

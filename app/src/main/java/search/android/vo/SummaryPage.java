@@ -1,30 +1,28 @@
 package search.android.vo;
 
-import android.graphics.Bitmap;
-
 /**
  * Created by nhnent on 2017. 4. 5..
  */
 
 public class SummaryPage {
-    private Bitmap thumbnail;
+    private String thumbnail;
     private String title;
     private String summary;
 
     public SummaryPage() {
     }
 
-    public SummaryPage(Bitmap thumbnail, String title, String summary) {
+    public SummaryPage(String thumbnail, String title, String summary) {
         this.thumbnail = thumbnail;
         this.title = title;
         this.summary = summary;
     }
 
-    public Bitmap getThumbnail() {
+    public String getThumbnail() {
         return thumbnail;
     }
 
-    public void setThumbnail(Bitmap thumbnail) {
+    public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
     }
 

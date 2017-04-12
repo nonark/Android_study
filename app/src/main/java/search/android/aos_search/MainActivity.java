@@ -1,20 +1,23 @@
 package search.android.aos_search;
 
 import android.app.Activity;
-import android.content.Context;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import search.android.adapter.SummaryPageAdapter;
 import search.android.customview.SearchBar;
-import search.android.task.WikiPageSearchTask;
+import search.android.task.AsyncTaskCancelTimerTask;
+import search.android.task.PageSearchTask;
 import search.android.vo.SummaryPage;
 
 public class MainActivity extends Activity {
@@ -23,7 +26,6 @@ public class MainActivity extends Activity {
     RecyclerView wikiPagesView;
     SummaryPageAdapter adapter;
     LinearLayout rootLayout;
-    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,7 @@ public class MainActivity extends Activity {
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getApplicationContext(), DetailActivity.class);
+                Intent intent = new Intent(getBaseContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
@@ -48,7 +50,7 @@ public class MainActivity extends Activity {
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getApplicationContext(), WebviewActivity.class);
+                Intent intent = new Intent(getBaseContext(), WebviewActivity.class);
                 intent.putExtra("Search", searchText);
                 startActivity(intent);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
@@ -58,14 +60,48 @@ public class MainActivity extends Activity {
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
-
-        context = this;
         searchBar = (SearchBar) findViewById(R.id.searchBar);
 
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
             @Override
             public void onSearchButtonClicked(final String searchText) {
-                WikiPageSearchTask task = new WikiPageSearchTask(context, adapter);
+                final PageSearchTask task = new PageSearchTask();
+                task.setOnPageSearchTaskListener(new PageSearchTask.OnPageSearchTaskListener() {
+
+                    ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+
+                    @Override
+                    public void onPreExecuted() {
+                        dialog.setMessage("Loding...");
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                task.cancel(true);
+                                Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        dialog.show();
+                    }
+
+                    @Override
+                    public void onPostExecuted(Object object) {
+                        List<SummaryPage> wikiPages = (List<SummaryPage>) object;
+                        adapter.setWikiPages(wikiPages);
+                        adapter.notifyDataSetChanged();
+                        dialog.cancel();
+                        if(wikiPages.size() == 0) {
+                            Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled() {
+                        dialog.cancel();
+                        Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                new AsyncTaskCancelTimerTask(task, 10000, 1000, true).start();
                 task.execute(searchText);
             }
         });

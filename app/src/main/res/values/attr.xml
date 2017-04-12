@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="StatusBar">
+        <attr name="font_align" format="string" />
+        <attr name="status_mode" >
+            <enum name="search_mode" value="1" />
+            <enum name="status_mode" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>

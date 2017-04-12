@@ -30,6 +30,7 @@ public class WikiPageFinder {
         SummaryPage summaryPage = new SummaryPage();
         URL url = null;
         HttpURLConnection imgConnection = null;
+        String thumbnailUrl;
 
         try {
             jsonReader.beginObject();
@@ -50,9 +51,13 @@ public class WikiPageFinder {
                             switch(thumbnailKey) {
                                 case "source" :
                                     try {
-                                        url = new URL(jsonReader.nextString());
+                                        thumbnailUrl = jsonReader.nextString();
+                                        url = new URL(thumbnailUrl);
                                         imgConnection = (HttpURLConnection) url.openConnection();
-                                        summaryPage.setThumbnail(BitmapFactory.decodeStream(imgConnection.getInputStream()));
+
+                                        MemoryImageCache.addBitmap(thumbnailUrl, BitmapFactory.decodeStream(imgConnection.getInputStream()), MemoryImageCache.DUPLICATE.SKIP);
+                                        summaryPage.setThumbnail(thumbnailUrl);
+
                                         imgConnection.disconnect();
                                     } catch(IOException e) {
                                     } finally {
@@ -122,6 +127,7 @@ public class WikiPageFinder {
             if (wikiConnection != null) {
                 wikiConnection.disconnect();
             }
+
         }
         return resultParsing;
     }
