@@ -1,7 +1,10 @@
 package search.android.aos_search;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.webkit.WebView;
@@ -89,6 +92,13 @@ public class WebviewActivity extends Activity {
                 finish();
             }
         });
+
+        ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mobile = manager.getActiveNetworkInfo();
+        if(mobile == null) {
+            setResult(PageNavigation.NO_INTERNET);
+            finish();
+        }
 
         //Intent 내의 값이 null이 아니면 주어진 URL에 해당하는 웹 표시
         Intent intent = getIntent();
