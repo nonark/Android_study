@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +17,7 @@ import java.util.List;
 
 import search.android.adapter.SummaryPageAdapter;
 import search.android.customview.SearchBar;
+import search.android.navigation.PageNavigation;
 import search.android.task.AsyncTaskCancelTimerTask;
 import search.android.task.PageSearchTask;
 import search.android.tools.WikiPageFinder;
@@ -23,10 +25,10 @@ import search.android.vo.SummaryPage;
 
 public class MainActivity extends Activity {
 
-    SearchBar searchBar;
-    RecyclerView wikiPagesView;
-    SummaryPageAdapter adapter;
-    LinearLayout rootLayout;
+    private SearchBar searchBar;
+    private RecyclerView wikiPagesView;
+    private SummaryPageAdapter adapter;
+    private LinearLayout rootLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +43,8 @@ public class MainActivity extends Activity {
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-                intent.putExtra("Search", searchText);
-                startActivityForResult(intent, 0);
+                Intent intent = PageNavigation.moveSearchPage(getBaseContext(), searchText);
+                startActivityForResult(intent, PageNavigation.OK);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -51,9 +52,8 @@ public class MainActivity extends Activity {
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getBaseContext(), WebviewActivity.class);
-                intent.putExtra("Search", searchText);
-                startActivityForResult(intent, 0);
+                Intent intent = PageNavigation.moveWebviewPage(getBaseContext(), searchText);
+                startActivityForResult(intent, PageNavigation.OK);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -62,7 +62,6 @@ public class MainActivity extends Activity {
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
 
         searchBar = (SearchBar) findViewById(R.id.searchBar);
-
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
             @Override
             public void onSearchButtonClicked(final String searchText) {
@@ -77,9 +76,10 @@ public class MainActivity extends Activity {
                         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-
-
-                                //Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
+                                if(task.getStatus() != AsyncTask.Status.FINISHED) {
+                                    task.cancel(true);
+                                    Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
+                                }
                             }
                         });
                         dialog.show();
@@ -91,18 +91,18 @@ public class MainActivity extends Activity {
                         adapter.setWikiPages(wikiPages);
                         adapter.notifyDataSetChanged();
                         dialog.cancel();
+
                         if(wikiPages.size() == 0) {
-                            //Intent intent = new Intent();
-                            //intent.putExtra("Text", "검색어를 찾을 수 없습니다.");
-                            //setResult(100, intent);
                             Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onCancelled() {
-                        dialog.cancel();
-                        Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
+                        if(dialog.isShowing()) {
+                            dialog.cancel();
+                            Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -123,9 +123,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 100) {
-            Toast.makeText(getBaseContext(), data.getStringExtra("Text"), Toast.LENGTH_SHORT).show();
+        if(resultCode != PageNavigation.OK) {
+            Toast.makeText(getBaseContext(), PageNavigation.statusMessage(resultCode), Toast.LENGTH_SHORT).show();
         }
     }
 }

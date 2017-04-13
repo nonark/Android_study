@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
 
 import search.android.customview.StatusBar;
+import search.android.navigation.PageNavigation;
 import search.android.tools.WikiPageFinder;
 
 /**
@@ -17,8 +17,8 @@ import search.android.tools.WikiPageFinder;
 
 public class WebviewActivity extends Activity {
 
-    StatusBar statusBar;
-    WebView webView;
+    private StatusBar statusBar;
+    private WebView webView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,6 +31,7 @@ public class WebviewActivity extends Activity {
         statusBar.setOnBackButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
+                setResult(PageNavigation.OK);
                 finish();
             }
         });
@@ -39,10 +40,8 @@ public class WebviewActivity extends Activity {
         statusBar.setOnCloseButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
-                Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //이전의 Activity를 제거
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
-                startActivityForResult(intent, 0);
+                Intent intent = PageNavigation.moveMainPage(getBaseContext());
+                startActivity(intent);
             }
         });
 
@@ -50,16 +49,46 @@ public class WebviewActivity extends Activity {
         statusBar.setOnTitleClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.addCategory(Intent.CATEGORY_DEFAULT);
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Wikipedia_URL");
-                intent.putExtra(Intent.EXTRA_TEXT, new WikiPageFinder().getHtmlUrl(statusBar.getTitle()));
-                intent.setType("text/plain");
+                Intent intent = PageNavigation.shareWikiPage(new WikiPageFinder().getHtmlUrl(statusBar.getTitle()));
                 startActivity(Intent.createChooser(intent, "Share"));
             }
         });
 
         webView = (WebView) findViewById(R.id.webView);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+
+                switch(errorCode) {
+                    case ERROR_AUTHENTICATION:                // 서버에서 사용자 인증 실패
+                    case ERROR_BAD_URL:                            // 잘못된 URL
+                    case ERROR_CONNECT:                           // 서버로 연결 실패
+                    case ERROR_FAILED_SSL_HANDSHAKE:     // SSL handshake 수행 실패
+                    case ERROR_FILE:                                   // 일반 파일 오류
+                    case ERROR_FILE_NOT_FOUND:                // 파일을 찾을 수 없습니다
+                    case ERROR_HOST_LOOKUP:            // 서버 또는 프록시 호스트 이름 조회 실패
+                    case ERROR_IO:                               // 서버에서 읽거나 서버로 쓰기 실패
+                    case ERROR_PROXY_AUTHENTICATION:    // 프록시에서 사용자 인증 실패
+                    case ERROR_REDIRECT_LOOP:                // 너무 많은 리디렉션
+                    case ERROR_TOO_MANY_REQUESTS:      // 페이지 로드중 너무 많은 요청 발생
+                    case ERROR_UNKNOWN:                         // 일반 오류
+                    case ERROR_UNSUPPORTED_AUTH_SCHEME:  // 지원되지 않는 인증 체계
+                    case ERROR_UNSUPPORTED_SCHEME:           // URI가 지원되지 않는 방식
+                        setResult(PageNavigation.NO_SEARCH_RESULT);
+                        break;
+
+                    case ERROR_TIMEOUT:                           // 연결 시간 초과
+                        setResult(PageNavigation.TIME_OUT);
+                        break;
+
+                    default :
+                        setResult(PageNavigation.UNKOWN_ERROR);
+                        break;
+                }
+                finish();
+            }
+        });
 
         //Intent 내의 값이 null이 아니면 주어진 URL에 해당하는 웹 표시
         Intent intent = getIntent();
@@ -70,7 +99,7 @@ public class WebviewActivity extends Activity {
             webView.setWebViewClient(new WebViewClient());
             webView.loadUrl(new WikiPageFinder().getHtmlUrl(searchText));
         } else {
-            Toast.makeText(getBaseContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            setResult(PageNavigation.NO_INTENT);
             finish();
         }
     }

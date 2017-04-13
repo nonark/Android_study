@@ -2,13 +2,11 @@ package search.android.aos_search;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
@@ -18,6 +16,7 @@ import java.util.List;
 
 import search.android.adapter.SummaryPageAdapter;
 import search.android.customview.StatusBar;
+import search.android.navigation.PageNavigation;
 import search.android.task.AsyncTaskCancelTimerTask;
 import search.android.task.PageSearchTask;
 import search.android.tools.WikiPageFinder;
@@ -29,10 +28,9 @@ import search.android.vo.SummaryPage;
 
 public class DetailActivity extends Activity {
 
-    StatusBar statusBar;
-    RecyclerView wikiPagesView;
-    SummaryPageAdapter adapter;
-    Context context;
+    private StatusBar statusBar;
+    private RecyclerView wikiPagesView;
+    private SummaryPageAdapter adapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,9 +47,8 @@ public class DetailActivity extends Activity {
         adapter.setRelatedListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getBaseContext(), DetailActivity.class);
-                intent.putExtra("Search", searchText);
-                startActivityForResult(intent, 0);
+                Intent intent = PageNavigation.moveSearchPage(getBaseContext(), searchText);
+                startActivityForResult(intent, PageNavigation.OK);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -60,23 +57,21 @@ public class DetailActivity extends Activity {
         adapter.setHeaderItemClickedLListner(new SummaryPageAdapter.OnRecyclerViewItemClickedListener() {
             @Override
             public void onItemClicked(String searchText) {
-                Intent intent = new Intent(getBaseContext(), WebviewActivity.class);
-                intent.putExtra("Search", searchText);
-                startActivityForResult(intent, 0);
+                Intent intent = PageNavigation.moveWebviewPage(getBaseContext(), searchText);
+                startActivityForResult(intent, PageNavigation.OK);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
 
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
-        context = this;
         statusBar = (StatusBar) findViewById(R.id.statusBar);
         // 뒤로가기 버튼 클릭시 finish 호출
         statusBar.setOnBackButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
+                setResult(PageNavigation.OK);
                 finish();
             }
         });
@@ -85,9 +80,7 @@ public class DetailActivity extends Activity {
         statusBar.setOnCloseButtonClickedListener(new StatusBar.OnStatusBarClickedListener() {
             @Override
             public void onStatusButtonClicked() {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //이전의 Activity를 제거
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
+                Intent intent = PageNavigation.moveMainPage(getBaseContext());
                 startActivity(intent);
             }
         });
@@ -108,15 +101,11 @@ public class DetailActivity extends Activity {
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-
                             if(task.getStatus() != AsyncTask.Status.FINISHED) {
                                 task.cancel(true);
-                                Intent intent = new Intent();
-                                intent.putExtra("Text", "요청을 취소했습니다.");
-                                setResult(100, intent);
+                                setResult(PageNavigation.REQUEST_CANCLE);
                                 finish();
                             }
-                            //Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
                     dialog.show();
@@ -129,33 +118,26 @@ public class DetailActivity extends Activity {
                     adapter.notifyDataSetChanged();
                     dialog.cancel();
                     if(wikiPages.size() == 0) {
-                        Intent intent = new Intent();
-                        intent.putExtra("Text", "검색어를 찾을 수 없습니다.");
-                        setResult(100, intent);
+                        setResult(PageNavigation.NO_SEARCH_RESULT);
                         finish();
-                        //Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onCancelled() {
-                    dialog.cancel();
-                    Intent intent = new Intent();
-                    intent.putExtra("Text", "요청 시간을 초과했습니다.");
-                    setResult(100, intent);
-                    finish();
-                    //Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
+                    if(dialog.isShowing()) {
+                        dialog.cancel();
+                        setResult(PageNavigation.TIME_OUT);
+                        finish();
+                    }
                 }
             });
+
             new AsyncTaskCancelTimerTask(task, 10000, 1000, true).start();
             task.execute(searchText);
         } else {
-            Intent intents = new Intent();
-            intents.putExtra("Text", "요청 시간을 초과했습니다.");
-            setResult(100, intents);
+            setResult(PageNavigation.NO_INTENT);
             finish();
-            //Toast.makeText(getApplicationContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
-            //finish();
         }
     }
 
@@ -163,8 +145,8 @@ public class DetailActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //super.onActivityResult(requestCode, resultCode, data);
 
-        if(resultCode == 100) {
-            Toast.makeText(getBaseContext(), data.getStringExtra("Text"), Toast.LENGTH_SHORT).show();
+        if(resultCode != PageNavigation.OK) {
+            Toast.makeText(getBaseContext(), PageNavigation.statusMessage(requestCode), Toast.LENGTH_SHORT).show();
         }
 
     }
