@@ -1,6 +1,7 @@
 package search.android.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -89,7 +90,14 @@ public class SummaryPageAdapter extends RecyclerView.Adapter<SummaryPageAdapter.
     public void onBindViewHolder(ViewHolder holder, int position) {
         SummaryPage wikiPage = wikiPages.get(position);
 
-        holder.thumbnail.setImageBitmap(MemoryImageCache.getBitmap(wikiPage.getThumbnail()));
+        Bitmap bitmapImage = MemoryImageCache.getBitmap(wikiPage.getThumbnail());
+
+        if(bitmapImage != null) {
+            holder.thumbnail.setImageBitmap(bitmapImage);
+        } else {
+            holder.thumbnail.setBackgroundResource(R.mipmap.ic_launcher_round);
+        }
+
         holder.title.setText(wikiPage.getTitle());
         holder.summary.setText(wikiPage.getSummary());
 

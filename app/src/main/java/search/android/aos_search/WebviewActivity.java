@@ -53,7 +53,7 @@ public class WebviewActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.addCategory(Intent.CATEGORY_DEFAULT);
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Wikipedia_URL");
-                intent.putExtra(Intent.EXTRA_TEXT, WikiPageFinder.getHtmlUrl(statusBar.getTitle()));
+                intent.putExtra(Intent.EXTRA_TEXT, new WikiPageFinder().getHtmlUrl(statusBar.getTitle()));
                 intent.setType("text/plain");
                 startActivity(Intent.createChooser(intent, "Share"));
             }
@@ -68,7 +68,7 @@ public class WebviewActivity extends Activity {
             statusBar.setTitle(searchText);
 
             webView.setWebViewClient(new WebViewClient());
-            webView.loadUrl(WikiPageFinder.getHtmlUrl(searchText));
+            webView.loadUrl(new WikiPageFinder().getHtmlUrl(searchText));
         } else {
             Toast.makeText(getBaseContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
             finish();

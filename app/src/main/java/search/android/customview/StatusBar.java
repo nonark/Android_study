@@ -13,8 +13,6 @@ import android.widget.TextView;
 
 import search.android.aos_search.R;
 
-import static search.android.aos_search.R.id.searchText;
-
 /**
  * Created by nhnent on 2017. 4. 5..
  */
@@ -52,18 +50,20 @@ public class StatusBar extends Bar {
         backButton = (Button) findViewById(R.id.backButton);
         closeButton = (Button) findViewById(R.id.rightButton);
 
-        //View Image Setting
-        backButton.setBackgroundResource(R.drawable.btn_back);
-        closeButton.setBackgroundResource(R.drawable.ic_close);
-
         //Custom Attribute Setting
         TypedArray tArray = context.obtainStyledAttributes(attrs, R.styleable.Bar);
         int fontColor = tArray.getColor(R.styleable.Bar_fontColor, 0);
         int fontSize = tArray.getDimensionPixelSize(R.styleable.Bar_fontSize, (int) title.getTextSize());
+        int leftImageResourceId = tArray.getResourceId(R.styleable.Bar_leftButtonImage, R.drawable.btn_back);
+        int rightImageResourceId = tArray.getResourceId(R.styleable.Bar_rightButtonImage, R.drawable.ic_close);
 
         //Custom Attribute Setting
         title.setTextColor(fontColor);
         title.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
+
+        //View Image Setting
+        backButton.setBackgroundResource(leftImageResourceId);
+        closeButton.setBackgroundResource(rightImageResourceId);
 
         backButton.setOnClickListener(new OnClickListener() {
             @Override

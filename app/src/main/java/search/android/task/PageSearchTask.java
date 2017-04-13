@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import java.util.ArrayList;
 import java.util.List;
 
-import search.android.tools.WikiPageFinder;
+import search.android.tools.PageFinder;
 import search.android.vo.SummaryPage;
 
 /**
@@ -15,6 +15,11 @@ import search.android.vo.SummaryPage;
 public class PageSearchTask extends AsyncTask<String, Void, Object> {
 
     private OnPageSearchTaskListener onPageSearchTaskListener;
+    private PageFinder pageFinder;
+
+    public PageSearchTask(PageFinder pageFinder) {
+        this.pageFinder = pageFinder;
+    }
 
     @Override
     protected void onPreExecute() {
@@ -26,13 +31,13 @@ public class PageSearchTask extends AsyncTask<String, Void, Object> {
 
     @Override
     protected Object doInBackground(String... params) {
-        List<SummaryPage> wikiPages = WikiPageFinder.findRelatedPages(params[0]);
+        List<SummaryPage> wikiPages = pageFinder.findRelatedPages(params[0]);
 
         if(wikiPages == null) {
             wikiPages = new ArrayList<>();
         }
 
-        SummaryPage summaryPage = WikiPageFinder.getSummaryPage(params[0]);
+        SummaryPage summaryPage = pageFinder.getSummaryPage(params[0]);
 
         if(summaryPage != null) {
             wikiPages.add(0, summaryPage);

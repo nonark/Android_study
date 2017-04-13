@@ -63,16 +63,17 @@ public class SearchBar extends Bar {
         underLine = (View) findViewById(R.id.searchTextUnderLine);
         searchButton = (Button) findViewById(R.id.rightButton);
 
-        //View Image Setting
-        searchButton.setBackgroundResource(R.drawable.icon_confirm);
-
         TypedArray tArray = context.obtainStyledAttributes(attrs, R.styleable.Bar);
         int fontColor = tArray.getColor(R.styleable.Bar_fontColor, 0);
         int fontSize = tArray.getDimensionPixelSize(R.styleable.Bar_fontSize, (int) searchText.getTextSize());
+        int rightImageResourceId = tArray.getResourceId(R.styleable.Bar_rightButtonImage, R.drawable.icon_confirm);
 
         //Custom Attribute Setting
         searchText.setTextColor(fontColor);
         searchText.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
+
+        //View Image Setting
+        searchButton.setBackgroundResource(rightImageResourceId);
 
 
         searchText.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS); //자동완성기능 제거

@@ -1,17 +1,11 @@
 package search.android.navigation;
 
-import android.content.Context;
-import android.content.Intent;
-
-import search.android.aos_search.MainActivity;
-import search.android.tools.WikiPageFinder;
-
 /**
  * Created by nhnent on 2017. 4. 12..
  */
 
 public class PageSearchNavigation {
-
+/*
     public static Intent shareWikiPageIntent(String title) {
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -27,7 +21,7 @@ public class PageSearchNavigation {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
         return intent;
     }
-/*
+
     public static Intent moveSearchPage(Context context, String title) {
 
     }

@@ -20,7 +20,7 @@ import search.android.vo.SummaryPage;
  * Created by nhnent on 2017. 4. 5..
  */
 
-public class WikiPageFinder {
+public class WikiPageFinder implements PageFinder{
     private static String htmlUrl = "https://en.wikipedia.org/api/rest_v1/page/html/";
     private static String summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/";
     private static String relatedUrl = "https://en.wikipedia.org/api/rest_v1/page/related/";
@@ -132,7 +132,7 @@ public class WikiPageFinder {
         return resultParsing;
     }
 
-    public static SummaryPage getSummaryPage(String title) {
+    public SummaryPage getSummaryPage(String title) {
         JsonParser jsonParser = new JsonParser() {
             @Override
             public Object excuteParsing(JsonReader jsonReader) throws IOException{
@@ -143,7 +143,7 @@ public class WikiPageFinder {
         return (SummaryPage) getWikiData(summaryUrl + title, jsonParser);
     }
 
-    public static List<SummaryPage> findRelatedPages(String title) {
+    public List<SummaryPage> findRelatedPages(String title) {
         JsonParser jsonParser = new JsonParser() {
             @Override
             public Object excuteParsing(JsonReader jsonReader) throws IOException {
@@ -183,7 +183,7 @@ public class WikiPageFinder {
         return (List<SummaryPage>) getWikiData(relatedUrl + title, jsonParser);
     }
 
-    public static String getHtmlUrl(String title) {
+    public String getHtmlUrl(String title) {
         return htmlUrl + title;
     }
 

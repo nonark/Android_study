@@ -18,6 +18,7 @@ import search.android.adapter.SummaryPageAdapter;
 import search.android.customview.SearchBar;
 import search.android.task.AsyncTaskCancelTimerTask;
 import search.android.task.PageSearchTask;
+import search.android.tools.WikiPageFinder;
 import search.android.vo.SummaryPage;
 
 public class MainActivity extends Activity {
@@ -65,7 +66,7 @@ public class MainActivity extends Activity {
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
             @Override
             public void onSearchButtonClicked(final String searchText) {
-                final PageSearchTask task = new PageSearchTask();
+                final PageSearchTask task = new PageSearchTask(new WikiPageFinder());
                 task.setOnPageSearchTaskListener(new PageSearchTask.OnPageSearchTaskListener() {
 
                     ProgressDialog dialog = new ProgressDialog(MainActivity.this);
