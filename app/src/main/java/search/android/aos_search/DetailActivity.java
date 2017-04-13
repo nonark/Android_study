@@ -64,7 +64,7 @@ public class DetailActivity extends Activity {
         });
 
         wikiPagesView.setAdapter(adapter);
-        wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        wikiPagesView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
 
         statusBar = (StatusBar) findViewById(R.id.statusBar);
         // 뒤로가기 버튼 클릭시 finish 호출

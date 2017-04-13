@@ -59,7 +59,7 @@ public class MainActivity extends Activity {
         });
 
         wikiPagesView.setAdapter(adapter);
-        wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        wikiPagesView.setLayoutManager(new LinearLayoutManager(getBaseContext()));
 
         searchBar = (SearchBar) findViewById(R.id.searchBar);
         searchBar.setOnSearchBarClickedListener(new SearchBar.OnSearchBarClickedListener() {
