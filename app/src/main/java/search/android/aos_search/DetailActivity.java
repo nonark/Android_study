@@ -17,7 +17,7 @@ import java.util.List;
 import search.android.adapter.SummaryPageAdapter;
 import search.android.customview.StatusBar;
 import search.android.navigation.PageNavigation;
-import search.android.task.AsyncTaskCancelTimerTask;
+import search.android.task.AsyncTaskCancelTimer;
 import search.android.task.PageSearchTask;
 import search.android.tools.WikiPageFinder;
 import search.android.vo.SummaryPage;
@@ -133,7 +133,7 @@ public class DetailActivity extends Activity {
                 }
             });
 
-            new AsyncTaskCancelTimerTask(task, 10000, 1000, true).start();
+            new AsyncTaskCancelTimer(task, 10000, 1000, true).start();
             task.execute(searchText);
         } else {
             setResult(PageNavigation.NO_INTENT);

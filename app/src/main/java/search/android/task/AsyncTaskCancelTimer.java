@@ -7,7 +7,7 @@ import android.os.CountDownTimer;
  * Created by nhnent on 2017. 4. 12..
  */
 
-public class AsyncTaskCancelTimerTask extends CountDownTimer {
+public class AsyncTaskCancelTimer extends CountDownTimer {
 
     private AsyncTask asyncTask;
     private boolean interrupt;
@@ -19,7 +19,7 @@ public class AsyncTaskCancelTimerTask extends CountDownTimer {
      * @param countDownInterval The interval along the way to receive
      *                          {@link #onTick(long)} callbacks.
      */
-    public AsyncTaskCancelTimerTask(AsyncTask asyncTask, long millisInFuture, long countDownInterval, boolean interrupt) {
+    public AsyncTaskCancelTimer(AsyncTask asyncTask, long millisInFuture, long countDownInterval, boolean interrupt) {
         super(millisInFuture, countDownInterval);
         this.asyncTask = asyncTask;
         this.interrupt = interrupt;
