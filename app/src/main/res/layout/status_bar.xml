@@ -8,13 +8,14 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:id="@+id/backButtonArea"
         >
 
         <Button
             android:id="@+id/backButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/btn_back" />
+            tools:background="@drawable/btn_back" />
 
     </LinearLayout>
 
@@ -27,7 +28,7 @@
         android:paddingRight="12dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:id="@+id/textArea"
+        android:id="@+id/searchTextArea"
         >
 
         <search.android.customview.CustomEditText
@@ -66,7 +67,7 @@
             android:layout_height="1.5dp"
             android:background="@color/colorDefaultUnderLine"
             android:layout_below="@id/searchText"
-            android:id="@+id/underLine2"
+            android:id="@+id/searchTextUnderLine"
             />
 
 
@@ -81,6 +82,7 @@
         android:paddingLeft="10dp"
         android:focusable="true"
         android:focusableInTouchMode="true"
+        android:id="@+id/statusArea"
         >
 
         <TextView
@@ -88,7 +90,7 @@
             android:layout_height="wrap_content"
             android:textSize="24dp"
             android:paddingBottom="5dp"
-            android:hint="Result"
+            tools:text="Result"
             android:id="@+id/titleBar"
             android:layout_alignParentLeft="true"
             android:textStyle="bold"
@@ -116,10 +118,10 @@
         >
 
         <Button
-            android:id="@+id/closeButton"
+            android:id="@+id/rightButton"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:background="@drawable/ic_close" />
+            tools:background="@drawable/ic_close" />
 
     </LinearLayout>
 

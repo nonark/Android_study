@@ -5,8 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
@@ -48,7 +50,7 @@ public class DetailActivity extends Activity {
             public void onItemClicked(String searchText) {
                 Intent intent = new Intent(getBaseContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -59,13 +61,14 @@ public class DetailActivity extends Activity {
             public void onItemClicked(String searchText) {
                 Intent intent = new Intent(getBaseContext(), WebviewActivity.class);
                 intent.putExtra("Search", searchText);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
 
         wikiPagesView.setAdapter(adapter);
         wikiPagesView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
+        wikiPagesView.setItemAnimator(new DefaultItemAnimator());
 
         context = this;
         statusBar = (StatusBar) findViewById(R.id.statusBar);
@@ -104,8 +107,15 @@ public class DetailActivity extends Activity {
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
-                            task.cancel(true);
-                            Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
+
+                            if(task.getStatus() != AsyncTask.Status.FINISHED) {
+                                task.cancel(true);
+                                Intent intent = new Intent();
+                                intent.putExtra("Text", "요청을 취소했습니다.");
+                                setResult(100, intent);
+                                finish();
+                            }
+                            //Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
                         }
                     });
                     dialog.show();
@@ -118,22 +128,44 @@ public class DetailActivity extends Activity {
                     adapter.notifyDataSetChanged();
                     dialog.cancel();
                     if(wikiPages.size() == 0) {
-                        Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent();
+                        intent.putExtra("Text", "검색어를 찾을 수 없습니다.");
+                        setResult(100, intent);
+                        finish();
+                        //Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onCancelled() {
                     dialog.cancel();
-                    Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("Text", "요청 시간을 초과했습니다.");
+                    setResult(100, intent);
+                    finish();
+                    //Toast.makeText(getBaseContext(), "요청 시간을 초과했습니다.", Toast.LENGTH_SHORT).show();
                 }
             });
             new AsyncTaskCancelTimerTask(task, 10000, 1000, true).start();
             task.execute(searchText);
         } else {
-            Toast.makeText(getApplicationContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            Intent intents = new Intent();
+            intents.putExtra("Text", "요청 시간을 초과했습니다.");
+            setResult(100, intents);
             finish();
+            //Toast.makeText(getApplicationContext(), "페이지를 열 수 없습니다.", Toast.LENGTH_SHORT).show();
+            //finish();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+
+        if(resultCode == 100) {
+            Toast.makeText(getBaseContext(), data.getStringExtra("Text"), Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override

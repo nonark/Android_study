@@ -42,7 +42,7 @@ public class WebviewActivity extends Activity {
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); //이전의 Activity를 제거
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP); //MainActivity가 새로 생기는 것을 방지
-                startActivity(intent);
+                startActivityForResult(intent, 0);
             }
         });
 

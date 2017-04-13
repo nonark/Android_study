@@ -1,11 +1,13 @@
 package search.android.customview;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,7 +24,7 @@ import search.android.aos_search.R;
  * Created by nhnent on 2017. 4. 5..
  */
 
-public class SearchBar extends LinearLayout {
+public class SearchBar extends Bar {
 
     private RelativeLayout textArea;
     private CustomEditText searchText;
@@ -34,19 +36,45 @@ public class SearchBar extends LinearLayout {
 
     public SearchBar(Context context) {
         super(context);
-        init(context);
+        init(context, null);
     }
 
     public SearchBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init(context);
+        init(context, attrs);
     }
 
-    private void init(final Context context) {
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.wiki_search_bar, this, true);
 
+    private void init(Context context, AttributeSet attrs) {
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.status_bar, this, true);
+
+        //Status Bar에서 사용하는 기능은 비활성화
+        LinearLayout backButtonArea = (LinearLayout) findViewById(R.id.backButtonArea);
+        RelativeLayout statusArea = (RelativeLayout) findViewById(R.id.statusArea);
+
+        backButtonArea.setVisibility(View.GONE);
+        statusArea.setVisibility(View.GONE);
+
+        //View 연결
+        textArea = (RelativeLayout) findViewById(R.id.searchTextArea);
         searchText = (CustomEditText) findViewById(R.id.searchText);
+        deleteButton = (View) findViewById(R.id.deleteButton);
+        underLine = (View) findViewById(R.id.searchTextUnderLine);
+        searchButton = (Button) findViewById(R.id.rightButton);
+
+        //View Image Setting
+        searchButton.setBackgroundResource(R.drawable.icon_confirm);
+
+        TypedArray tArray = context.obtainStyledAttributes(attrs, R.styleable.Bar);
+        int fontColor = tArray.getColor(R.styleable.Bar_fontColor, 0);
+        int fontSize = tArray.getDimensionPixelSize(R.styleable.Bar_fontSize, (int) searchText.getTextSize());
+
+        //Custom Attribute Setting
+        searchText.setTextColor(fontColor);
+        searchText.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
+
+
         searchText.setRawInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS); //자동완성기능 제거
         searchText.setOnBackPressListner(new CustomEditText.OnBackPressListener() {
             @Override
@@ -55,7 +83,6 @@ public class SearchBar extends LinearLayout {
 
             }
         });
-
         searchText.setOnFocusChangeListener(new OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -120,8 +147,6 @@ public class SearchBar extends LinearLayout {
             }
         });
 
-        deleteButton = findViewById(R.id.deleteButton);
-
         //삭제버튼을 클릭하면 입력된 모든 정보를 제거
         deleteButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -129,10 +154,6 @@ public class SearchBar extends LinearLayout {
                 searchText.setText("");
             }
         });
-
-        underLine = findViewById(R.id.underLine);
-        searchButton = (Button) findViewById(R.id.searchButton);
-        textArea = (RelativeLayout) findViewById(R.id.textArea);
 
         //검색버튼을 누르면 리스너를 통해서 검색어를 전달
         searchButton.setOnClickListener(new OnClickListener() {
@@ -144,7 +165,6 @@ public class SearchBar extends LinearLayout {
                 }
             }
         });
-
     }
 
     public void setOnSearchBarClickedListener(OnSearchBarClickedListener searchBarListener) {

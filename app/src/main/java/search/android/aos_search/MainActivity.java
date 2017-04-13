@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
             public void onItemClicked(String searchText) {
                 Intent intent = new Intent(getBaseContext(), DetailActivity.class);
                 intent.putExtra("Search", searchText);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
             public void onItemClicked(String searchText) {
                 Intent intent = new Intent(getBaseContext(), WebviewActivity.class);
                 intent.putExtra("Search", searchText);
-                startActivity(intent);
+                startActivityForResult(intent, 0);
                 overridePendingTransition(R.anim.anim_hold, R.anim.left_slide);
             }
         });
@@ -76,8 +76,9 @@ public class MainActivity extends Activity {
                         dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                             @Override
                             public void onDismiss(DialogInterface dialog) {
-                                task.cancel(true);
-                                Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
+
+
+                                //Toast.makeText(getBaseContext(), "요청을 취소했습니다.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         dialog.show();
@@ -90,6 +91,9 @@ public class MainActivity extends Activity {
                         adapter.notifyDataSetChanged();
                         dialog.cancel();
                         if(wikiPages.size() == 0) {
+                            //Intent intent = new Intent();
+                            //intent.putExtra("Text", "검색어를 찾을 수 없습니다.");
+                            //setResult(100, intent);
                             Toast.makeText(getBaseContext(), "검색어를 찾을 수 없습니다.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -114,5 +118,13 @@ public class MainActivity extends Activity {
             }
         });
         rootLayout.performClick();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 100) {
+            Toast.makeText(getBaseContext(), data.getStringExtra("Text"), Toast.LENGTH_SHORT).show();
+        }
     }
 }

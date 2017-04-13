@@ -14,6 +14,8 @@
         android:paddingLeft="12dp"
         android:paddingRight="12dp"
         android:id="@+id/statusBar"
+        app:fontColor="#0000ff"
+        app:fontSize="10dp"
         />
 
     <View
