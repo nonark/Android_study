@@ -112,6 +112,11 @@ public class DetailActivity extends Activity {
                 }
 
                 @Override
+                public void onProgressUpdate(String str) {
+                    dialog.setMessage(str);
+                }
+
+                @Override
                 public void onPostExecuted(Object object) {
                     List<SummaryPage> wikiPages = (List<SummaryPage>) object;
                     adapter.setWikiPages(wikiPages);

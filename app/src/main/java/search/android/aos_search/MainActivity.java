@@ -98,6 +98,11 @@ public class MainActivity extends Activity {
                     }
 
                     @Override
+                    public void onProgressUpdate(String str) {
+                        dialog.setMessage(str);
+                    }
+
+                    @Override
                     public void onCancelled() {
                         if(dialog.isShowing()) {
                             dialog.cancel();

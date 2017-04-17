@@ -12,7 +12,7 @@ import search.android.vo.SummaryPage;
  * Created by nhnent on 2017. 4. 7..
  */
 
-public class PageSearchTask extends AsyncTask<String, Void, Object> {
+public class PageSearchTask extends AsyncTask<String, String, Object> {
 
     private OnPageSearchTaskListener onPageSearchTaskListener;
     private PageFinder pageFinder;
@@ -31,13 +31,15 @@ public class PageSearchTask extends AsyncTask<String, Void, Object> {
 
     @Override
     protected Object doInBackground(String... params) {
+        publishProgress("검색어 찾는 중...(1/2)");
+        SummaryPage summaryPage = pageFinder.getSummaryPage(params[0]);
+
+        publishProgress("연관 검색어 찾는 중...(2/2)");
         List<SummaryPage> wikiPages = pageFinder.findRelatedPages(params[0]);
 
         if(wikiPages == null) {
             wikiPages = new ArrayList<>();
         }
-
-        SummaryPage summaryPage = pageFinder.getSummaryPage(params[0]);
 
         if(summaryPage != null) {
             wikiPages.add(0, summaryPage);
@@ -46,8 +48,13 @@ public class PageSearchTask extends AsyncTask<String, Void, Object> {
         return wikiPages;
     }
 
-
-
+    @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        if(onPageSearchTaskListener != null) {
+            onPageSearchTaskListener.onProgressUpdate(values[0]);
+        }
+    }
 
     @Override
     protected void onPostExecute(Object pages) {
@@ -59,8 +66,9 @@ public class PageSearchTask extends AsyncTask<String, Void, Object> {
 
     @Override
     protected void onCancelled() {
-        //super.onCancelled();
-        onPageSearchTaskListener.onCancelled();
+        if(onPageSearchTaskListener != null) {
+            onPageSearchTaskListener.onCancelled();
+        }
     }
 
     public void setOnPageSearchTaskListener(OnPageSearchTaskListener onPageSearchTaskListener) {
@@ -70,6 +78,7 @@ public class PageSearchTask extends AsyncTask<String, Void, Object> {
     public interface OnPageSearchTaskListener{
         void onPreExecuted();
         void onPostExecuted(Object object);
+        void onProgressUpdate(String str);
         void onCancelled();
     }
 }
