@@ -98,6 +98,7 @@ public class DetailActivity extends Activity {
                 @Override
                 public void onPreExecuted() {
                     dialog.setMessage("Loding...");
+                    dialog.setCanceledOnTouchOutside(false);
                     dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialog) {
