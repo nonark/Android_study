@@ -12,13 +12,6 @@ public class AsyncTaskCancelTimer extends CountDownTimer {
     private AsyncTask asyncTask;
     private boolean interrupt;
 
-    /**
-     * @param millisInFuture    The number of millis in the future from the call
-     *                          to {@link #start()} until the countdown is done and {@link #onFinish()}
-     *                          is called.
-     * @param countDownInterval The interval along the way to receive
-     *                          {@link #onTick(long)} callbacks.
-     */
     public AsyncTaskCancelTimer(AsyncTask asyncTask, long millisInFuture, long countDownInterval, boolean interrupt) {
         super(millisInFuture, countDownInterval);
         this.asyncTask = asyncTask;

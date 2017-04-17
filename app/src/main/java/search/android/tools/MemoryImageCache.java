@@ -1,6 +1,7 @@
 package search.android.tools;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 /**
@@ -17,29 +18,33 @@ public class MemoryImageCache {
         SKIP;
     }
 
-    public static synchronized void addBitmap(String key, Bitmap bitmap, DUPLICATE type) {
+    public static void addBitmap(String key, Bitmap bitmap, DUPLICATE type) {
+
         if(key == null || bitmap == null) {
             return;
         }
 
-        if(type == DUPLICATE.SKIP && lruCache.get(key) != null) {
-            return;
-        }
+        synchronized (lruCache) {
+            if(type == DUPLICATE.SKIP && lruCache.get(key) != null) {
+                return;
+            }
 
-        if(lruCache.size() + 1 > lruCache.maxSize()) {
-            clear();
-        }
+            if(lruCache.size() + 1 > lruCache.maxSize()) {
+                clear();
+            }
 
-        lruCache.put(key, bitmap);
+            lruCache.put(key, bitmap);
+        }
     }
 
-    public static synchronized Bitmap getBitmap(String key) {
+    public static Bitmap getBitmap(String key) {
+        synchronized (lruCache) {
+            if(key == null || lruCache.get(key) == null) {
+                return null;
+            }
 
-        if(key == null || lruCache.get(key) == null) {
-            return null;
+            return lruCache.get(key);
         }
-
-        return lruCache.get(key);
     }
 
     public static synchronized void clear() {

@@ -93,6 +93,7 @@ public class WebviewActivity extends Activity {
             }
         });
 
+        //인터넷 연결 확인 - PERMISSION(ACCESS_NETWORK_STATE) 필요
         ConnectivityManager manager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo mobile = manager.getActiveNetworkInfo();
         if(mobile == null) {
